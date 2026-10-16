@@ -24,6 +24,7 @@ const getProfile = async (id) => {
   return profile;
 };
 
+
 const createUser = async ({ name, email, password, role }) => {
   const exists = await repo.findByEmail(email);
   if (exists) throw { status: 409, message: 'Email already in use' };
