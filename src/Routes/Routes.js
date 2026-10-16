@@ -3,6 +3,7 @@ const auth        = require('../controllers/AuthController');
 const rawMaterial = require('../controllers/RawMaterialController');
 const product     = require('../controllers/ProductController');
 const productionOrder = require('../controllers/ProductionOrderController');
+const stockMovement = require('../controllers/StockMovementController');
 const { authenticate, requireRole } = require('../Middlewares/AuthMiddleware');
 
 // Public
@@ -21,6 +22,10 @@ router.post('/raw-materials',        authenticate, requireRole('ADMIN'), rawMate
 router.get('/raw-materials',         authenticate, requireRole('ADMIN'), rawMaterial.findAll);
 router.get('/raw-materials/:id',     authenticate, requireRole('ADMIN'), rawMaterial.findById);
 router.patch('/raw-materials/:id',   authenticate, requireRole('ADMIN'), rawMaterial.update);
+
+// Stock movements — Admin only
+router.post('/stock-movements', authenticate, requireRole('ADMIN'), stockMovement.create);
+router.get('/stock-movements', authenticate, requireRole('ADMIN'), stockMovement.findAll);
 
 // Products — Admin only
 router.post('/products',       authenticate, requireRole('ADMIN'), product.create);
