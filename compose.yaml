@@ -6,6 +6,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/factoryflow?replicaSet=rs0
     depends_on:
       mongodb:
         condition: service_healthy
@@ -17,12 +19,13 @@ services:
   mongodb:
     image: mongo:7
     container_name: factoryflow_mongodb
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "try { rs.status().ok } catch (error) { rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongodb:27017'}]}).ok }"]
       interval: 10s
       timeout: 5s
       retries: 5
